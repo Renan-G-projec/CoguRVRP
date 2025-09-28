@@ -275,6 +275,8 @@ public: // Variáveis Públicas
             velocity.y = 0;
         };
 
+
+        // Checa colisão com bola de fogo
     };
 };
 
@@ -316,20 +318,25 @@ public: // Membros
     };
 };
 
+
+Texture2D firesprite;
 // Classe do tiro
 class Bullet {
 private:
     int vel;
+    float AnimTimerF = 0.0f;
+    int frameF = 0;
     
 public:
-Vector2 position;
+    Vector2 position;
+    bool fire;
     bool active = true;
 
     // Construtor
-    Bullet(Vector2 position, int vel) : position(position), vel(vel) {};
+    Bullet(Vector2 position, int vel, bool fire) : position(position), vel(vel), fire(fire) {};
 
     // Atualiza o tiro.
-    void update(int map[20][32]) {
+    void update(int map[20][32], Player &p) {
         int next_tile = (position.x + vel) / 32;
         int tiley = position.y / 32;
         if (map[tiley][next_tile] != 0) {
@@ -337,12 +344,40 @@ Vector2 position;
         } else {
             position.x += vel;
         }
+        if (fire) {
+            // Atualiza a animação
+            AnimTimerF += GetFrameTime();
+            if (AnimTimerF >= 0.2f) {
+                AnimTimerF = 0.0f;
+                frameF++;
+            }
+            if (frameF >= 6) {
+                frameF = 0;
+            }
+
+            // Checa Colisão com o player
+            if (abs(p.position.x - position.x) <= 64 && abs(p.position.y - position.y) <= 64) { // Checa somente as colisões próximas
+                if (CheckCollisionRecs(p.rect, {position.x, position.y + 8, 32, 16})) {
+                    p.take_damage();
+                    active = false;
+                }
+            }
+        }
     }
 
     // Desenha o tiro
     void draw() {
         if (!active) return;
-        DrawRectangle(position.x - 2, position.y - 2, 4, 4, WHITE);
+        if (!fire) {
+            DrawRectangle(position.x - 2, position.y - 2, 4, 4, WHITE);
+        } else {
+            if (vel < 0) {
+                DrawTexturePro(firesprite, {static_cast<float>(frameF*32), 0, 32, 32}, {position.x, position.y + 32, 32, 32}, {0, 0}, 180.0f, WHITE);
+            } else {
+                DrawTexturePro(firesprite, {static_cast<float>(frameF*32), 0, 32, 32}, {position.x, position.y, 32, 32}, {0, 0}, 0.0f, WHITE);
+            }
+        }
+        
     }
 
 };
@@ -382,7 +417,7 @@ public:
             }
         }
         for (auto &b : bullets){
-            if (CheckCollisionRecs({b.position.x -2, b.position.y -2, 4, 4}, {position.x, position.y, 32, 32})) {
+            if (CheckCollisionRecs({b.position.x -2, b.position.y -2, 4, 4}, {position.x, position.y, 32, 32}) && !b.fire) {
                 b.active = false;
                 active = false;
             }
@@ -568,10 +603,14 @@ int main() {
     // Carrega os adversários iniciais:
     adversarys.push_back(Adversary({6*32, 9*32}));
 
+    // Cooldown de bolas de fogo
+    float FireCooldown = 0.0f;
+
     // Carrega as texturas
     Texture2D levels_tile_group[3] = {LoadTexture("levels_1_2/tile_group.png"), LoadTexture("levels_3_4_5/tile_group.png"), LoadTexture("levels_6_7_8/tile_group.png")};
     Texture2D backgrounds[3] = {LoadTexture("sprites/back_start.png"), LoadTexture("sprites/back_middle.png"), LoadTexture("sprites/back_final.png")};
     powerup.texture = LoadTexture("sprites/power_up1.png");
+    firesprite = LoadTexture("sprites/fireball.png");
     textures[0] = LoadTexture("sprites/ad1.png");
     textures[1] = LoadTexture("sprites/ad2.png");
     textures[2] = LoadTexture("sprites/ad3.png");
@@ -588,18 +627,33 @@ int main() {
     while (!WindowShouldClose()) {
         // Função de atirar
         if (IsKeyPressed(KEY_RIGHT) && player.HasPowerUp && player.powerup == 1) {
-            bullets.push_back(Bullet({player.position.x + 36, player.position.y + 16}, 7));
+            bullets.push_back(Bullet({player.position.x + 36, player.position.y + 16}, 7, false));
         } else if (IsKeyPressed(KEY_LEFT) && player.HasPowerUp && player.powerup == 1) {
-            bullets.push_back(Bullet({player.position.x - 4, player.position.y + 16}, -7));
+            bullets.push_back(Bullet({player.position.x - 4, player.position.y + 16}, -7, false));
         };
 
         // Reiniciar
         if (IsKeyPressed(KEY_R)) {
             player.Set_position(initial_positions[player.level]); // g++ main.cpp levels_array.cpp -o main.exe -lraylib -lopengl32 -lgdi32 -lwinmm
         };
+
+        // Vê se o nível é 3
+        if (player.level == 2) {
+            FireCooldown += GetFrameTime();
+            if (FireCooldown >= 5.0f) {
+                FireCooldown = 0.0f;
+                for (auto &a : adversarys) {
+                    if (player.position.x - a.position.x <= 0) {
+                        bullets.push_back(Bullet(a.position, -7, true));
+                    } else {
+                        bullets.push_back(Bullet(a.position, 7, true));
+                    }
+                }
+            }
+        }
         
         // Atualiza: Balas, Player, Power Up e saída
-        for (auto &b : bullets) b.update(levels_array[player.level]);
+        for (auto &b : bullets) b.update(levels_array[player.level], player);
         player.update(levels_array[player.level], 0.5f);
         powerup.update(player);
         exit.CheckColisionPlayer(player, powerup);
@@ -632,6 +686,7 @@ int main() {
     for (auto &s : levels_tile_group) UnloadTexture(s);
     for (auto &b : backgrounds) UnloadTexture(b);
     for (auto &a : textures) UnloadTexture(a);
+    UnloadTexture(firesprite);
     UnloadTexture(player.swordatack);
     UnloadTexture(player.sprites);
     CloseWindow();
