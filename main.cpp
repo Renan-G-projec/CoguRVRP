@@ -338,6 +338,13 @@ public:
     // Atualiza o tiro.
     void update(int map[20][32], Player &p) {
         int next_tile = (position.x + vel) / 32;
+        if (fire) {
+            if (vel > 0) {
+                next_tile = (position.x + 32 + vel) / 32;
+            } else {
+                next_tile = (position.x - 32 + vel) / 32;
+            }
+        }
         int tiley = position.y / 32;
         if (map[tiley][next_tile] != 0) {
             active = false;
