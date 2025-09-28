@@ -72,6 +72,8 @@ public: // Variáveis Públicas
     float attackTimer = 0.0f;     // Controle de tempo do ataque
     int attackFrame = 0;          // Frame da animação da espada
     int atack_dir = 0;
+    int attack_kind = 0; // 0 - Espada; 1 - Raio;
+    Rectangle attack_sword = {0, 0, 96, 96};
 
     // Função pra setar a posição
     void Set_position(Vector2 pos) {
@@ -81,9 +83,27 @@ public: // Variáveis Públicas
     void Attack() {
         if (!HasPowerUp) return;
         if (!attacking) {
+            if (powerup == 3) attack_kind = 0;
+            if (powerup == 5) attack_kind = 1;
             attacking = true;
             attackTimer = 0.0f;
             attackFrame = 0;
+        }
+        switch (atack_dir) {
+        case 0:
+            attack_sword = {position.x + 32, position.y - 32, 96, 96};
+            break;
+        case 1:
+            attack_sword = {position.x - 32, position.y + 32, 96, 96};
+            break;
+        case 2:
+            attack_sword = {position.x - 96, position.y -32, 96, 96};
+            break;
+        case 3:
+            attack_sword = {position.x -32, position.y - 96, 96, 96};
+            break;
+        default:
+            break;
         }
     }
 
@@ -423,9 +443,17 @@ public:
                 }
             }
         }
+        // Colisão com tiros
         for (auto &b : bullets){
             if (CheckCollisionRecs({b.position.x -2, b.position.y -2, 4, 4}, {position.x, position.y, 32, 32}) && !b.fire) {
                 b.active = false;
+                active = false;
+            }
+        }
+
+        // Colisão com espada
+        if (p.attacking && p.attack_kind == 0) {
+            if (CheckCollisionRecs(p.attack_sword, {position.x, position.y, 32, 32})) {
                 active = false;
             }
         }
