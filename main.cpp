@@ -49,15 +49,15 @@ void draw_map(int map[20][32], Texture2D level_tile_set, Texture2D background) {
 
 // Classe do Player
 class Player {
-private: // Variáveis principais
+public:
     float AnimTimer = 0.0f;
     int frame = 0;
     float tx;
     float ty;
     bool isoncooldown = false;
-    float timeuntil = 15.0f;
-
-public: // Variáveis Públicas
+    float timeuntil = 10.0f;
+    Texture2D display = LoadTexture("sprites/cooldown_bar.png");
+    Texture2D power_bar = LoadTexture("sprites/power_bar.png");
     bool OnGround = false;
     Vector2 velocity = {0, 0};
     Texture2D sprites = LoadTexture("sprites/MainMush.png");
@@ -158,6 +158,13 @@ public: // Variáveis Públicas
             }
             DrawTexturePro(swordatack, {static_cast<float>(attackFrame*96), 0, 96, 96}, {origin_x, origin_y, 96, 96}, {0, 0}, 90.0f*static_cast<float>(atack_dir), WHITE);
         }
+        DrawTexture(display, 4, 20*32-20, WHITE);
+        if (isoncooldown) {
+            int now = 10 - timeuntil;
+            for (int i=0; i<now; i++) {
+                DrawTexture(power_bar, i * 4 + 9, 20*32 -16, WHITE);
+            }
+        }
         
         // Pega do sprite
         Rectangle source = {tx, ty, 32, 32};
@@ -243,7 +250,7 @@ public: // Variáveis Públicas
         // Cooldown
         if (isoncooldown) {
             if (timeuntil <= 0) {
-                timeuntil = 15.0f;
+                timeuntil = 10.0f;
                 isoncooldown = false;
             } else {
                 timeuntil -= GetFrameTime();
@@ -724,5 +731,7 @@ int main() {
     UnloadTexture(firesprite);
     UnloadTexture(player.swordatack);
     UnloadTexture(player.sprites);
+    UnloadTexture(player.display);
+    UnloadTexture(player.power_bar);
     CloseWindow();
 }
