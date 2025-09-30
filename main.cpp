@@ -509,8 +509,40 @@ public:
 // Vetor de adversário
 std::vector<Adversary> adversarys;
 
-// Classe do jogo
-class Game {};
+// Classe do teleporter
+class TP {
+public:
+    Vector2 pos1, pos2;
+    Texture2D sprite = LoadTexture("sprites/root.png");
+    bool active = false;
+    TP(Vector2 pos1, Vector2 pos2) : pos1(pos1), pos2(pos2) {};
+    ~TP() {
+        UnloadTexture(sprite);
+    }
+
+    void draw() {
+        if (!active) return;
+        DrawTexture(sprite, pos1.x, pos1.y, WHITE);
+        DrawTexture(sprite, pos2.x, pos2.y, WHITE);
+    }
+
+    void update(Player &p) {
+        if (!active) return;
+        if(!p.HasPowerUp || p.powerup != 4) return;
+
+        if (abs(p.position.x-pos1.x) <= 32 && abs(p.position.y - pos1.y) <= 32) {
+            if (IsKeyPressed(KEY_S)) {
+                p.position = pos2;
+            }
+        }
+        if (abs(p.position.x-pos2.x) <= 32 && abs(p.position.y - pos2.y) <= 32) {
+            if (IsKeyPressed(KEY_S)) {
+                p.position = pos1;
+            }
+        }
+    }
+
+};
 
 // Classe da saída da fase
 class Exit {
@@ -535,7 +567,7 @@ public:
     };
 
     // Checa se tocou na saída
-    void CheckColisionPlayer(Player &p, Item &u) {
+    void CheckColisionPlayer(Player &p, Item &u, TP &t) {
         if (CheckCollisionRecs(p.rect, {position.x, position.y, 64, 64}) && level_unlock[p.level]) {
             p.level += 1; // Level seguinte
 
@@ -593,10 +625,13 @@ public:
                 case 4:
                     u.collected = false;
                     u.kind = 4;
-                    u.position = {0, 0};
+                    u.position = {30*32, 8*32};
                     u.texture = LoadTexture("sprites/power_up5.png");
                     position = {32, 16*32};
                     position_key = {11*32, 17*32};
+                    t.active = true;
+                    t.pos1 = {24*32, 16*32};
+                    t.pos2 = {4*32, 1*32};
                     break;
                 case 5:
                     u.collected = false;
@@ -605,6 +640,7 @@ public:
                     u.texture = LoadTexture("sprites/power_up6.png");
                     position_key = {32, 6*32};
                     position = {32, 64};
+                    t.active = false;
                     break;
                 case 6:
                     u.collected = false;
@@ -627,12 +663,14 @@ public:
             level_unlock[p.level] = true;
         }
     };
+    
 };
 
-class Entrance {};
+
 
 // Principal
 int main() {
+
     // Inicia a janela
     index = 0;
     InitWindow(32*32, 32*20, "CoguRVRP");
@@ -641,6 +679,7 @@ int main() {
     Player player;
     Exit exit;
     Item powerup({7*32, 9*32});
+    TP teleporter({0,0}, {0,0});
 
     // Carrega os adversários iniciais:
     adversarys.push_back(Adversary({6*32, 9*32}));
@@ -698,8 +737,9 @@ int main() {
         for (auto &b : bullets) b.update(levels_array[player.level], player);
         player.update(levels_array[player.level], 0.5f);
         powerup.update(player);
-        exit.CheckColisionPlayer(player, powerup);
+        exit.CheckColisionPlayer(player, powerup, teleporter);
         for (auto &a : adversarys) a.update(player);
+        teleporter.update(player);
         
         // Deletas as balas inativas
         for (int i = 0; i<bullets.size(); i++) {
@@ -722,6 +762,7 @@ int main() {
         exit.draw(player);
         for (auto &b : bullets) b.draw();
         for (auto &a : adversarys) a.draw(player.level);
+        teleporter.draw();
         player.draw();
         EndDrawing();
     }
