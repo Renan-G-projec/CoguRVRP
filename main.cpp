@@ -544,6 +544,34 @@ public:
 
 };
 
+// Classe dos cogumelos dourados
+class Golden_mushroom {
+private: 
+    Texture2D sprite = LoadTexture("sprites/golden_mushroom.png");
+    Vector2 position = {2*32, 7*32};
+    bool active = true;
+
+public: 
+    ~Golden_mushroom() {
+        UnloadTexture(sprite);
+    };
+
+    void draw() {
+        if (!active) return;
+        DrawTexture(sprite, position.x, position.y, WHITE);
+    };
+
+    void update(Player &p) {
+        if (!active) return;
+        if (abs(p.position.x - position.x) <= 64 && abs(p.position.y - position.y) <= 64) {
+            if (CheckCollisionRecs(p.rect, {position.x, position.y, 32, 32})) {
+                active = false;
+                golden_mushrooms[p.level] = true;
+            };
+        };
+    };
+};
+
 // Classe da saída da fase
 class Exit {
 private:
@@ -680,6 +708,7 @@ int main() {
     Exit exit;
     Item powerup({7*32, 9*32});
     TP teleporter({0,0}, {0,0});
+    Golden_mushroom GM;
 
     // Carrega os adversários iniciais:
     adversarys.push_back(Adversary({6*32, 9*32}));
@@ -740,6 +769,7 @@ int main() {
         exit.CheckColisionPlayer(player, powerup, teleporter);
         for (auto &a : adversarys) a.update(player);
         teleporter.update(player);
+        GM.update(player);
         
         // Deletas as balas inativas
         for (int i = 0; i<bullets.size(); i++) {
@@ -763,6 +793,7 @@ int main() {
         for (auto &b : bullets) b.draw();
         for (auto &a : adversarys) a.draw(player.level);
         teleporter.draw();
+        GM.draw();
         player.draw();
         EndDrawing();
     }
