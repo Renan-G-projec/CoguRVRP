@@ -534,8 +534,7 @@ public:
             if (IsKeyPressed(KEY_S)) {
                 p.position = pos2;
             }
-        }
-        if (abs(p.position.x-pos2.x) <= 32 && abs(p.position.y - pos2.y) <= 32) {
+        } else if (abs(p.position.x-pos2.x) <= 32 && abs(p.position.y - pos2.y) <= 32) {
             if (IsKeyPressed(KEY_S)) {
                 p.position = pos1;
             }
@@ -659,7 +658,7 @@ public:
                     position_key = {11*32, 17*32};
                     t.active = true;
                     t.pos1 = {24*32, 16*32};
-                    t.pos2 = {4*32, 1*32};
+                    t.pos2 = {4*32, 14*32};
                     break;
                 case 5:
                     u.collected = false;
