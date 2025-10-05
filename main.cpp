@@ -55,7 +55,7 @@ public:
     float tx;
     float ty;
     bool isoncooldown = false;
-    float timeuntil = 10.0f;
+    float timeuntil = 7.0f;
     Texture2D display = LoadTexture("sprites/cooldown_bar.png");
     Texture2D power_bar = LoadTexture("sprites/power_bar.png");
     bool OnGround = false;
@@ -158,11 +158,16 @@ public:
             }
             DrawTexturePro(swordatack, {static_cast<float>(attackFrame*96), 0, 96, 96}, {origin_x, origin_y, 96, 96}, {0, 0}, 90.0f*static_cast<float>(atack_dir), WHITE);
         }
-        DrawTexture(display, 4, 20*32-20, WHITE);
+
+        DrawTexture(display, 4, 18*32, WHITE);
         if (isoncooldown) {
-            int now = 10 - timeuntil;
+            int now = 7 - timeuntil;
             for (int i=0; i<now; i++) {
-                DrawTexture(power_bar, i * 4 + 9, 20*32 -16, WHITE);
+                DrawTexture(power_bar, 8, 6+18*32+(i*8), WHITE);
+            }
+        } else {
+            for (int i=0; i<7; i++) {
+                DrawTexture(power_bar, 8, 6+18*32+(i*8), WHITE);
             }
         }
         
@@ -250,7 +255,7 @@ public:
         // Cooldown
         if (isoncooldown) {
             if (timeuntil <= 0) {
-                timeuntil = 10.0f;
+                timeuntil = 7.0f;
                 isoncooldown = false;
             } else {
                 timeuntil -= GetFrameTime();
