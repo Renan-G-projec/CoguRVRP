@@ -1,10 +1,10 @@
 # CoguRVRP
 <line>
 CoguRVRP is the first game of a small group of friends. Here are the main contribuitors ordered from the top to the bottom by the progress the game made with the work:
-* Renan: Programmer.
-* Vinicius: Game Designer.
-* Ruam: Writer and NPC maker.
-* Pedro and Paulo: Sound effects.
+- Renan: Programmer. 
+- Vinicius: Game Designer.
+- Ruam: Writer and NPC maker.
+- Pedro and Paulo: Sound effects.
 <line>
 # 8 Fases, 7 new discoverys
 The game have 8 fases, 7 with cool power ups and the last one with a boss to fight against. 

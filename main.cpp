@@ -62,6 +62,7 @@ public:
     Vector2 velocity = {0, 0};
     Texture2D sprites = LoadTexture("sprites/MainMush.png");
     Texture2D swordatack = LoadTexture("sprites/sword.png");
+    Texture2D eletric_attack = LoadTexture("sprites/eletric_attack.png");
     char animState = 'I';
     Vector2 position = {64, 12*32};
     Rectangle rect = {position.x + 2, position.y + 2, 28, 30};
@@ -71,9 +72,11 @@ public:
     bool attacking = false;       // Se está atacando
     float attackTimer = 0.0f;     // Controle de tempo do ataque
     int attackFrame = 0;          // Frame da animação da espada
+    int attack_explosion_frame = 0;
     int atack_dir = 0;
     int attack_kind = 0; // 0 - Espada; 1 - Raio;
     Rectangle attack_sword = {0, 0, 96, 96};
+    Rectangle attack_explosion = {0, 0, 128, 32};
 
     // Função pra setar a posição
     void Set_position(Vector2 pos) {
@@ -92,15 +95,19 @@ public:
         switch (atack_dir) {
         case 0:
             attack_sword = {position.x + 32, position.y - 32, 96, 96};
+            attack_explosion = {position.x + 32, position.y, 128, 32};
             break;
         case 1:
             attack_sword = {position.x - 32, position.y + 32, 96, 96};
+            attack_explosion = {position.x, position.y + 32, 32, 128};
             break;
         case 2:
             attack_sword = {position.x - 96, position.y -32, 96, 96};
+            attack_explosion = {position.x - 128, position.y, 128, 32};
             break;
         case 3:
-            attack_sword = {position.x -32, position.y - 96, 96, 96};
+            attack_sword = {position.x - 32, position.y - 96, 96, 96};
+            attack_explosion = {position.x, position.y - 128, 32, 128};
             break;
         default:
             break;
@@ -157,6 +164,34 @@ public:
                 break;
             }
             DrawTexturePro(swordatack, {static_cast<float>(attackFrame*96), 0, 96, 96}, {origin_x, origin_y, 96, 96}, {0, 0}, 90.0f*static_cast<float>(atack_dir), WHITE);
+        } else if (attacking && powerup == 5) {
+            float Angle = 0.0f;
+            float origin_x = 0;
+            float origin_y = 0;
+            switch (atack_dir) {
+            case 0:
+                origin_x = position.x + 32;
+                origin_y = position.y;
+                break;
+            
+            case 1:
+                origin_x = position.x + 32;
+                origin_y = position.y + 32;
+                break;
+
+            case 2:
+                origin_x = position.x;
+                origin_y = position.y + 32;
+                break;
+            
+            case 3:
+                origin_x = position.x;
+                origin_y = position.y;
+                break;
+            default:
+                break;
+            }
+            DrawTexturePro(eletric_attack, {0, static_cast<float>(attack_explosion_frame*32), 128, 32}, {origin_x, origin_y, 128, 32}, {0, 0}, 90.0f*static_cast<float>(atack_dir), WHITE);
         }
 
         DrawTexture(display, 4, 18*32, WHITE);
@@ -244,10 +279,15 @@ public:
             attackTimer += GetFrameTime();
             if (attackTimer >= 0.02f) {   // tempo entre frames
                 attackTimer = 0.0f;
+                attack_explosion_frame++;
                 attackFrame++;
                 if (attackFrame >= 9) {  // supondo que a espada tenha 3 frames
                     attacking = false;
                     attackFrame = 0;
+                }
+                if (attack_explosion_frame >= 13) {
+                    attacking = false;
+                    attack_explosion_frame = 0;
                 }
             }
         }
@@ -470,6 +510,13 @@ public:
             }
         }
 
+        // Colisão com o raio
+        if (p.attacking && p.attack_kind == 1) {
+            if (CheckCollisionRecs(p.attack_explosion, {position.x, position.y, 32, 32})) {
+                active = false;
+            }
+        }
+
         // Define a quantidade de frames por animação.
         switch (p.level) {
         case 0:
@@ -668,7 +715,7 @@ public:
                 case 5:
                     u.collected = false;
                     u.kind = 5;
-                    u.position = {0, 0};
+                    u.position = {28*32, 13*32};
                     u.texture = LoadTexture("sprites/power_up6.png");
                     position_key = {32, 6*32};
                     position = {32, 64};
@@ -807,5 +854,6 @@ int main() {
     UnloadTexture(player.sprites);
     UnloadTexture(player.display);
     UnloadTexture(player.power_bar);
+    UnloadTexture(player.eletric_attack);
     CloseWindow();
 }
