@@ -56,13 +56,13 @@ public:
     float ty;
     bool isoncooldown = false;
     float timeuntil = 7.0f;
-    Texture2D display = LoadTexture("sprites/cooldown_bar.png");
-    Texture2D power_bar = LoadTexture("sprites/power_bar.png");
+    Texture2D display = LoadTexture("assets/sprites/cooldown_bar.png");
+    Texture2D power_bar = LoadTexture("assets/sprites/power_bar.png");
     bool OnGround = false;
     Vector2 velocity = {0, 0};
-    Texture2D sprites = LoadTexture("sprites/MainMush.png");
-    Texture2D swordatack = LoadTexture("sprites/sword.png");
-    Texture2D eletric_attack = LoadTexture("sprites/eletric_attack.png");
+    Texture2D sprites = LoadTexture("assets/sprites/MainMush.png");
+    Texture2D swordatack = LoadTexture("assets/sprites/sword.png");
+    Texture2D eletric_attack = LoadTexture("assets/sprites/eletric_attack.png");
     char animState = 'I';
     Vector2 position = {64, 12*32};
     Rectangle rect = {position.x + 2, position.y + 2, 28, 30};
@@ -565,7 +565,7 @@ std::vector<Adversary> adversarys;
 class TP {
 public:
     Vector2 pos1, pos2;
-    Texture2D sprite = LoadTexture("sprites/root.png");
+    Texture2D sprite = LoadTexture("assets/sprites/root.png");
     bool active = false;
     TP(Vector2 pos1, Vector2 pos2) : pos1(pos1), pos2(pos2) {};
     ~TP() {
@@ -598,7 +598,7 @@ public:
 // Classe dos cogumelos dourados
 class Golden_mushroom {
 private: 
-    Texture2D sprite = LoadTexture("sprites/golden_mushroom.png");
+    Texture2D sprite = LoadTexture("assets/sprites/golden_mushroom.png");
     Vector2 position = {2*32, 7*32};
     bool active = true;
 
@@ -626,8 +626,8 @@ public:
 // Classe da saída da fase
 class Exit {
 private:
-    Texture2D sprite = LoadTexture("sprites/exit.png");
-    Texture2D key = LoadTexture("sprites/key.png");
+    Texture2D sprite = LoadTexture("assets/sprites/exit.png");
+    Texture2D key = LoadTexture("assets/sprites/key.png");
 public:
     Vector2 position = {27*32, 15*32};
     Vector2 position_key = {23*32, 11*32};
@@ -667,7 +667,7 @@ public:
                     u.collected = false;
                     u.kind = 1;
                     u.position = {13*32, 2*32};
-                    u.texture = LoadTexture("sprites/power_up2.png");
+                    u.texture = LoadTexture("assets/sprites/power_up2.png");
                     position = {48, 17*32};
                     position_key = {11*32, 10*32};
                     adversarys.push_back(Adversary({4*32, 7*32}));
@@ -682,7 +682,7 @@ public:
                     u.collected = false;
                     u.kind = 2;
                     u.position = {17*32, 9*32};
-                    u.texture = LoadTexture("sprites/power_up3.png");
+                    u.texture = LoadTexture("assets/sprites/power_up3.png");
                     position = {28*32, 3*32};
                     position_key = {17*32, 8*32};
                     adversarys.push_back(Adversary({14*32, 9*32}));
@@ -694,7 +694,7 @@ public:
                     u.collected = false;
                     u.kind = 3;
                     u.position = {64, 15*32};
-                    u.texture = LoadTexture("sprites/power_up4.png");
+                    u.texture = LoadTexture("assets/sprites/power_up4.png");
                     position = {2*32, 7*32};
                     position_key = {27*32, 4*32};
                     adversarys.push_back(Adversary({18*32, 5*32}));
@@ -705,7 +705,7 @@ public:
                     u.collected = false;
                     u.kind = 4;
                     u.position = {30*32, 8*32};
-                    u.texture = LoadTexture("sprites/power_up5.png");
+                    u.texture = LoadTexture("assets/sprites/power_up5.png");
                     position = {32, 16*32};
                     position_key = {11*32, 17*32};
                     t.active = true;
@@ -716,7 +716,7 @@ public:
                     u.collected = false;
                     u.kind = 5;
                     u.position = {28*32, 13*32};
-                    u.texture = LoadTexture("sprites/power_up6.png");
+                    u.texture = LoadTexture("assets/sprites/power_up6.png");
                     position_key = {32, 6*32};
                     position = {32, 64};
                     t.active = false;
@@ -725,7 +725,7 @@ public:
                     u.collected = false;
                     u.kind = 6;
                     u.position = {0, 0};
-                    u.texture = LoadTexture("sprites/power_up7.png");
+                    u.texture = LoadTexture("assets/sprites/power_up7.png");
                     position_key = {20*32, 15*32};
                     position = {32, 15*32};
                     break;
@@ -766,15 +766,15 @@ int main() {
     float FireCooldown = 0.0f;
 
     // Carrega as texturas
-    Texture2D levels_tile_group[3] = {LoadTexture("levels_1_2/tile_group.png"), LoadTexture("levels_3_4_5/tile_group.png"), LoadTexture("levels_6_7_8/tile_group.png")};
-    Texture2D backgrounds[3] = {LoadTexture("sprites/back_start.png"), LoadTexture("sprites/back_middle.png"), LoadTexture("sprites/back_final.png")};
-    powerup.texture = LoadTexture("sprites/power_up1.png");
-    firesprite = LoadTexture("sprites/fireball.png");
-    textures[0] = LoadTexture("sprites/ad1.png");
-    textures[1] = LoadTexture("sprites/ad2.png");
-    textures[2] = LoadTexture("sprites/ad3.png");
-    textures[3] = LoadTexture("sprites/ad4.png");
-    textures[4] = LoadTexture("sprites/ad5.png");
+    Texture2D levels_tile_group[3] = {LoadTexture("assets/levels_1_2/tile_group.png"), LoadTexture("assets/levels_3_4_5/tile_group.png"), LoadTexture("assets/levels_6_7_8/tile_group.png")};
+    Texture2D backgrounds[3] = {LoadTexture("assets/sprites/back_start.png"), LoadTexture("assets/sprites/back_middle.png"), LoadTexture("assets/sprites/back_final.png")};
+    powerup.texture = LoadTexture("assets/sprites/power_up1.png");
+    firesprite = LoadTexture("assets/sprites/fireball.png");
+    textures[0] = LoadTexture("assets/sprites/ad1.png");
+    textures[1] = LoadTexture("assets/sprites/ad2.png");
+    textures[2] = LoadTexture("assets/sprites/ad3.png");
+    textures[3] = LoadTexture("assets/sprites/ad4.png");
+    textures[4] = LoadTexture("assets/sprites/ad5.png");
 
     // Power Up de pulo
     powerup.kind = 0;

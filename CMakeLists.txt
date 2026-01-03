@@ -7,7 +7,7 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(lib/raylib)
 
-add_executable(cogurvrp main.cpp levels_array.cpp)
+add_executable(cogurvrp src/main.cpp src/levels_array.cpp)
 
 target_link_libraries(cogurvrp raylib m pthread dl rt)
 
