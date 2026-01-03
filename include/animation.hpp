@@ -7,6 +7,9 @@ struct Animation {
     float frameTime;            // Time between frames
     float timer;                // Timer for control
 
+    // Constructor
+    Animation(const int numberOfFrames, float frameTime) : numberOfFrames(numberOfFrames), frameTime(frameTime) {};
+
     // Just updates the frame
     inline void update(float deltatime) {
         timer += deltatime;
