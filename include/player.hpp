@@ -8,6 +8,8 @@ class Player {
 private:
     // Textures and animations
     Texture2D sprite;
+    int sourceX;
+    int sourceY;
     Animation idleAnimation;
     Animation runLeftAnimation;
     Animation runRightAnimation;
