@@ -5,6 +5,33 @@ Player::Player(ResourceManager& resourceManager) : idleAnimation{1, 0.0f}, runLe
     currentAnimation = &idleAnimation;
 }
 
+void Player::jump(float jumpStrength) {
+    velocity.x = -jumpStrength;
+}
+
+void Player::move() {
+    // Checking for inputs
+    bool right = IsKeyPressed(KEY_D);
+    bool left = IsKeyPressed(KEY_A);
+    bool jump = IsKeyPressed(KEY_W);
+
+    // Moving - Horizontal
+    if (right) {
+        // RIGHT
+        velocity.x = 4;
+        currentAnimation = &runRightAnimation;
+    } else if (left) {
+        // LEFT
+        velocity.x = -4;
+        currentAnimation = &runLeftAnimation;
+    } else {
+        // IDLE
+        velocity.x = 0;
+        currentAnimation = &idleAnimation;
+    }
+
+}
+
 void Player::draw() {
     currentAnimation->update(GetFrameTime());
 

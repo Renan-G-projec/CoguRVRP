@@ -28,7 +28,8 @@ public:
     Player(ResourceManager& resourceManager);
 
     void jump(float jumpStrength);
-
+    void move();
+    
     void draw();
     void update();
 };
