@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-Player::Player(ResourceManager& resourceManager) : idleAnimation{1, 0.0f}, runLeftAnimation{2, 0.4f}, runRightAnimation{2, 0.4f} {
+Player::Player(ResourceManager& resourceManager, PhysicsEngine& physicsEngine) : resourceManager(resourceManager), physicsEngine(physicsEngine), idleAnimation{1, 0.0f}, runLeftAnimation{2, 0.4f}, runRightAnimation{2, 0.4f} {
     sprite = resourceManager.getTexture("../assets/sprites/MainMush.png");
     currentAnimation = &idleAnimation;
 }

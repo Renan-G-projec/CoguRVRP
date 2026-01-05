@@ -2,10 +2,15 @@
 #define PLAYER_HPP
 
 #include "resourceManager.hpp"
+#include "physicsEngine.hpp"
 #include "animation.hpp"
 
 class Player {
 private:
+    // Dependencies
+    ResourceManager& resourceManager;
+    PhysicsEngine& physicsEngine;
+
     // Textures and animations
     Texture2D sprite;
     int sourceX;
@@ -25,11 +30,11 @@ private:
     Animation* currentAnimation;
 
 public:
-    Player(ResourceManager& resourceManager);
+    Player(ResourceManager& resourceManager, PhysicsEngine& physicsEngine);
 
     void jump(float jumpStrength);
     void move();
-    
+
     void draw();
     void update();
 };
