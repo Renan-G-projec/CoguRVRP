@@ -19,18 +19,22 @@ private:
     Animation runLeftAnimation;
     Animation runRightAnimation;
 
+    // Flags
+    bool onGround = false; // Initializing to avoid garbage data
+
     // Current position
     Vector2 position;
     Vector2 positionInTiles;
 
     // Velocities and stuff
     Vector2 velocity;
+    float jumpStrength;
 
     // Current pointers
     Animation* currentAnimation;
 
 public:
-    Player(ResourceManager& resourceManager, PhysicsEngine& physicsEngine);
+    Player(ResourceManager& resourceManager, PhysicsEngine& physicsEngine, float jumpStrength);
 
     void jump(float jumpStrength);
     void move();

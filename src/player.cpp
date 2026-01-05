@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-Player::Player(ResourceManager& resourceManager, PhysicsEngine& physicsEngine) : resourceManager(resourceManager), physicsEngine(physicsEngine), idleAnimation{1, 0.0f}, runLeftAnimation{2, 0.4f}, runRightAnimation{2, 0.4f} {
+Player::Player(ResourceManager& resourceManager, PhysicsEngine& physicsEngine, float jumpStrength) : resourceManager(resourceManager), physicsEngine(physicsEngine), jumpStrength(jumpStrength), idleAnimation{1, 0.0f}, runLeftAnimation{2, 0.4f}, runRightAnimation{2, 0.4f} {
     sprite = resourceManager.getTexture("../assets/sprites/MainMush.png");
     currentAnimation = &idleAnimation;
 }
@@ -13,7 +13,7 @@ void Player::move() {
     // Checking for inputs
     bool right = IsKeyPressed(KEY_D);
     bool left = IsKeyPressed(KEY_A);
-    bool jump = IsKeyPressed(KEY_W);
+    bool jumpRequest = IsKeyDown(KEY_W);
 
     // Moving - Horizontal
     if (right) {
@@ -30,6 +30,16 @@ void Player::move() {
         currentAnimation = &idleAnimation;
     }
 
+    // Moving - Vertical
+    if (!onGround) {
+        velocity.y += physicsEngine.gravity;
+    } else {
+        velocity.y = 0;
+    }
+
+    if (jumpRequest && onGround) {
+        jump(jumpStrength);
+    }
 }
 
 void Player::draw() {
