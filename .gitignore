@@ -1,0 +1,13 @@
+# Compilation
+build/
+bin/
+
+# Libraries
+lib/
+
+# System and IDE
+.vs/
+.vscode/
+*.swp
+*.o
+*.out
